@@ -3,7 +3,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile
 (
           'NAME' => 'Bot::BasicBot::Pluggable::Module::Tools',
-          'VERSION' => '0.8',
+          'VERSION' => '0.9',
           'PREREQ_PM' => {
                            'Bot::BasicBot::Pluggable' => '0.5',
                            'Finance::Currency::Convert::XE' => '0',
