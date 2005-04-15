@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: Bot-BasicBot-Pluggable-Module-Tools
-version: 0.9
+version: 0.95
 author: Simon Wistow <simon@thegestalt.org>
 abstract: |-
   a miscellany of useful plugins for Bot::BasicBot::Pluggable
