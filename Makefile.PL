@@ -3,18 +3,21 @@ use ExtUtils::MakeMaker;
 WriteMakefile
 (
           'NAME' => 'Bot::BasicBot::Pluggable::Module::Tools',
-          'VERSION' => '0.95',
+          'VERSION_FROM' => 'lib/Bot/BasicBot/Pluggable/Module/Tools.pm',
           'PREREQ_PM' => {
                            'Bot::BasicBot::Pluggable' => '0.5',
                            'Finance::Currency::Convert::XE' => '0',
                            'Finance::Quote' => '0',
+                           'Lingua::Ispell' => '0',
+                           'Lingua::Translate' => '0',
                            'Locale::Language' => '0',
                            'Math::Expression' => '0',
                            'Math::Units' => '0',
                            'Test::More' => '0',
-                           'WWW::MakeAShorterLink' => '0'
+                           'WWW::Shorten' => '0'
                          },
           'INSTALLDIRS' => 'site',
+          'EXE_FILES' => [],
           'PL_FILES' => {}
         )
 ;

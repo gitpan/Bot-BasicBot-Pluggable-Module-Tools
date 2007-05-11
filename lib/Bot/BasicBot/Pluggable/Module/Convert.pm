@@ -11,7 +11,9 @@ use Finance::Currency::Convert::XE;
 sub init {
     my $self = shift;
     $self->{converter} = Finance::Currency::Convert::XE->new();
-    $self->set("scientific_limit", 999_999_999) unless $self->get("scientific_limit"); 
+    $self->set("user_scientific_limit", 999999999) unless $self->get("user_scientific_limit"); 
+    $self->unset("user_scientific_limit");
+
 }
 
 sub said { 
@@ -22,38 +24,41 @@ sub said {
 
     return unless ($pri == 2);
 
-    return unless $body =~  /^\s*(?:ex)?(?:change|convert)\s+([\d\.\,]+)\s+(\S+)\s+(?:into|to|for)\s+(\S+)/i;
+    return unless $body =~  /^\s*(?:ex)?(?:change|convert)\s+([\d\.\,]+)\s*(\S+)\s+(?:into|to|for)\s+(\S+)/i;
     my ($amount, $from, $to) = ($1,$2,$3);
 
 
-    if ($body =~ /convert/) {
+    # first try and convert units
 
-        my $val;
-        eval { $val  = Math::Units::convert($amount, $from, $to) };
+     my $val = eval {  Math::Units::convert($amount, $from, $to) };
+     goto CURRENCY if $@;
 
-        $val = sprintf "%e", $val if $val > $self->get("scientific_limit");
-        return "Hrrm - $@" if $@;
-        return "Dunno about that" unless defined $val && $val !~ m!^\s*$!;
+     my $limit = $self->get("user_scientific_limit");
 
-        return "$amount $from is $val $to";
+     if (defined $limit && $limit < $val) {
+     	$val = sprintf "%e", $val;
+     }
 
-    } else {
-        my $obj = $self->{converter};
-        return "Currency conversion not working" unless $obj;
+
+     return "Dunno about that" unless defined $val && $val !~ m!^\s*$!;
+
+     return "$amount $from is $val $to";
+     CURRENCY:
+
+     my $obj = $self->{converter};
+     return "Currency conversion not working" unless $obj;
         
-        my $val = $obj->convert( 
+     $from = uc($from);
+     $to   = uc($to);
+     $val = $obj->convert( 
                   'source' => $from,
                   'target' => $to,
                   'value'  => $amount,
                   'format' => 'number'
                 );
 
-        return "Currency conversion failed - ".$obj->error unless defined $val;
-
-        return "$amount $from is $val $to";
-
-    }
-
+     return "Couldn't out what to do with with the units $from and $to" unless defined $val;
+     return "$amount $from is $val $to";
 }
 
 sub help {
